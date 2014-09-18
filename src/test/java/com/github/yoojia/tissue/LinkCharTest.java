@@ -9,7 +9,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Yoojia.Chen (yoojia.chen@gmail.com)
  * 2014-08-26
- * 多个单位
+ * 间隔符
  */
 public class LinkCharTest {
 
@@ -17,7 +17,7 @@ public class LinkCharTest {
 
     @Before
     public void setUp(){
-        tissue = Tissue.base("B");
+        tissue = Tissue.first("B");
         tissue.linkChar("-");
         tissue.next("KB",1024)
                 .next("MB",1024)

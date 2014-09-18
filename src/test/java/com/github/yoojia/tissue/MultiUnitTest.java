@@ -9,7 +9,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Yoojia.Chen (yoojia.chen@gmail.com)
  * 2014-08-26
- * 多个单位
+ * 多个单位：同一个量级数值
  */
 public class MultiUnitTest {
 
@@ -17,7 +17,7 @@ public class MultiUnitTest {
 
     @Before
     public void setUp(){
-        tissue = Tissue.base("B");
+        tissue = Tissue.first("B");
         tissue.next("KB",1024)
                 .next("MB",1024)
                 .next("GB",1024)

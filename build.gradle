@@ -1,6 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.5
+
 version = '1.0'
 
 repositories {
@@ -11,4 +13,16 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-apply from: 'http://git.oschina.net/chenyoca/GradlePublish/raw/master/publish_java.gradle'
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.github.yoojia'
+            artifactId 'tissue'
+            version '1.0'
+
+            from components.java
+        }
+    }
+}
+
+//apply from: 'http://git.oschina.net/chenyoca/GradlePublish/raw/master/publish_java.gradle'

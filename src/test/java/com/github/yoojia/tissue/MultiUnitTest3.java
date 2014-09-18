@@ -17,7 +17,7 @@ public class MultiUnitTest3 {
 
     @Before
     public void setUp(){
-        tissue = Tissue.base("毫秒");
+        tissue = Tissue.first("毫秒");
         tissue.next("秒", 1000)
                 .next("分钟", 60)
                 .next("小时", 60)
