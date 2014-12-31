@@ -27,5 +27,6 @@ public class SingleUnitTest {
         Tissue t = Tissue.first("MB", 1000*1000);
         t.precision(2);
         System.out.println(">> " + t.format(1000*32477));
+        System.out.println(">> " + t.format(0));
     }
 }

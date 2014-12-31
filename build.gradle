@@ -1,14 +1,48 @@
 apply plugin: 'java'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
-sourceCompatibility = 1.5
+version = '1.0-alpha'
+group = 'com.github.yoojia'
+
+tasks.withType(JavaCompile){
+    options.encoding = 'UTF-8'
+}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier "source"
+    from sourceSets.main.allJava
 }
 
-apply from: 'http://git.oschina.net/chenyoca/GradlePublish/raw/master/publish_java.gradle'
+artifacts{
+    archives sourceJar
+}
+
+signing {
+    required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("uploadArchives") }
+    Sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: LOCAL_RELEASE_URL){
+                authentication(userName: LOCAL_USER, password: LOCAL_PASS)
+            }
+
+            snapshotRepository(url: LOCAL_SNAPSHOT_URL){
+                authentication(userName: LOCAL_USER, password: LOCAL_PASS)
+            }
+
+            pom.version = version
+            pom.artifactId = 'tissue'
+        }
+    }
+}

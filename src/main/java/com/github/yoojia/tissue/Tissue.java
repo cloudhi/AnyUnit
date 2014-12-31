@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Tissue {
 
-    static class Section{
+    private static class Section{
 
         final String unitChar;
         final long radix;
@@ -29,6 +29,11 @@ public class Tissue {
      * 单个单位表示时，数值精度位数
      */
     private int precision = 3;
+
+    /**
+     * 单个单位时，强制要求显示精度
+     */
+    private boolean enforcePrecision = false;
 
     /**
      * 第一个单位，其基数为1.
@@ -95,6 +100,15 @@ public class Tissue {
     }
 
     /**
+     * 强制要求数值精度，在单个单位时生效
+     * @param enforce
+     */
+    public Tissue enforcePrecision(boolean enforce){
+        this.enforcePrecision = enforce;
+        return this;
+    }
+
+    /**
      * 格式化数值
      * @param value 数值
      * @return 格式化的数值
@@ -107,7 +121,7 @@ public class Tissue {
             Section sec = sections.get(max);
             double result = value / sec.radix;
             long intResult = (long)result;
-            if (result == intResult){
+            if (result == intResult && !enforcePrecision){
                 // 不需要显示精度数值
                 msg.append(intResult);
             }else{
