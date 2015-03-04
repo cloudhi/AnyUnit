@@ -1,4 +1,4 @@
-package com.github.yoojia.tissue;
+package com.github.yoojia.anyunit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,13 +13,13 @@ import static org.hamcrest.core.Is.is;
  */
 public class LinkCharTest {
 
-    private Tissue tissue;
+    private AnyUnit mAnyUnit;
 
     @Before
     public void setUp(){
-        tissue = Tissue.first("B");
-        tissue.linkChar("-");
-        tissue.next("KB",1024)
+        mAnyUnit = AnyUnit.first("B");
+        mAnyUnit.linkChar("-");
+        mAnyUnit.next("KB",1024)
                 .next("MB",1024)
                 .next("GB",1024)
                 .next("TB",1024)
@@ -28,10 +28,10 @@ public class LinkCharTest {
 
     @Test
     public void testBase(){
-        String base = tissue.format(1023);
+        String base = mAnyUnit.format(1023);
         assertThat(base,is("1023B"));
 
-        base = tissue.format(102455);
+        base = mAnyUnit.format(102455);
         assertThat(base,is("100KB-55B"));
     }
 

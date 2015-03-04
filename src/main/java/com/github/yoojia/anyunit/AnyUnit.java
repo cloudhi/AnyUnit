@@ -1,46 +1,48 @@
-package com.github.yoojia.tissue;
+package com.github.yoojia.anyunit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tissue {
+public class AnyUnit {
 
     private static class Section{
-
-        final String unitChar;
+        /**
+         * 计量单位名
+         */
+        final String unitName;
         final long radix;
         final long preRadix;
 
         Section(String unitChar, long radix, long preRadix){
-            this.unitChar = unitChar;
+            this.unitName = unitChar;
             this.radix = radix;
             this.preRadix = preRadix;
         }
     }
 
-    private List<Section> sections = new ArrayList<Section>();
+    private final List<Section> mSections = new ArrayList<Section>();
 
     /**
      * 各级单位的连接符
      */
-    private String linkChar = "";
+    private String mLinkChar = "";
 
     /**
      * 单个单位表示时，数值精度位数
      */
-    private int precision = 3;
+    private int mPrecision = 3;
 
     /**
      * 单个单位时，强制要求显示精度
      */
-    private boolean enforcePrecision = false;
+    private boolean mEnforcePrecision = false;
 
     /**
      * 第一个单位，其基数为1.
      * @param unit 单位名称
      * @return Tissue对象
      */
-    public static Tissue first(String unit){
+    public static AnyUnit first(String unit){
         return first(unit, 1);
     }
 
@@ -50,9 +52,9 @@ public class Tissue {
      * @param radix 基数
      * @return Tissue对象
      */
-    public static Tissue first(String unit, int radix){
-        Tissue item = new Tissue();
-        item.sections.add(new Section(unit, radix, radix));
+    public static AnyUnit first(String unit, int radix){
+        AnyUnit item = new AnyUnit();
+        item.mSections.add(new Section(unit, radix, radix));
         return item;
     }
 
@@ -62,9 +64,9 @@ public class Tissue {
      * @param radix 与上一级的基数
      * @return Tissue对象
      */
-    public Tissue next(String unit, int radix){
-        Section last = sections.get(sections.size() - 1);
-        sections.add(new Section(unit, last.radix * radix, radix));
+    public AnyUnit next(String unit, int radix){
+        Section last = mSections.get(mSections.size() - 1);
+        mSections.add(new Section(unit, last.radix * radix, radix));
         return this;
     }
 
@@ -73,9 +75,9 @@ public class Tissue {
      * @param unit 单位名称
      * @return Tissue对象
      */
-    public Tissue next(String unit){
-        Section last = sections.get(sections.size() - 1);
-        sections.add(new Section(unit, last.radix * last.preRadix, last.preRadix));
+    public AnyUnit next(String unit){
+        Section last = mSections.get(mSections.size() - 1);
+        mSections.add(new Section(unit, last.radix * last.preRadix, last.preRadix));
         return this;
     }
 
@@ -84,8 +86,8 @@ public class Tissue {
      * @param linkChar 连接符
      * @return Tissue对象
      */
-    public Tissue linkChar(String linkChar){
-        this.linkChar = linkChar;
+    public AnyUnit linkChar(String linkChar){
+        this.mLinkChar = linkChar;
         return this;
     }
 
@@ -94,8 +96,8 @@ public class Tissue {
      * @param precision 精度小数位数
      * @return Tissue对象
      */
-    public Tissue precision(int precision){
-        this.precision = precision;
+    public AnyUnit precision(int precision){
+        this.mPrecision = precision;
         return this;
     }
 
@@ -103,8 +105,8 @@ public class Tissue {
      * 强制要求数值精度，在单个单位时生效
      * @param enforce
      */
-    public Tissue enforcePrecision(boolean enforce){
-        this.enforcePrecision = enforce;
+    public AnyUnit enforcePrecision(boolean enforce){
+        this.mEnforcePrecision = enforce;
         return this;
     }
 
@@ -114,23 +116,23 @@ public class Tissue {
      * @return 格式化的数值
      */
     public String format(double value){
-        final int max = sections.size() - 1;
-        StringBuilder msg = new StringBuilder();
+        final int max = mSections.size() - 1;
+        final StringBuilder msg = new StringBuilder();
         // Single
         if (max == 0){
-            Section sec = sections.get(max);
+            final Section sec = mSections.get(max);
             double result = value / sec.radix;
             long intResult = (long)result;
-            if (result == intResult && !enforcePrecision){
+            if (result == intResult && !mEnforcePrecision){
                 // 不需要显示精度数值
                 msg.append(intResult);
             }else{
-                msg.append(String.format("%." + precision + "f", result));
+                msg.append(String.format("%." + mPrecision + "f", result));
             }
-            msg.append(sec.unitChar);
+            msg.append(sec.unitName);
         }else{
             for (int i = max; i>=0; --i){
-                Section sec = sections.get(i);
+                Section sec = mSections.get(i);
                 double result = value / sec.radix;
                 int intResult = (int)result;
                 if (intResult <= 0){
@@ -138,9 +140,9 @@ public class Tissue {
                 }else{
                     msg.append(intResult);
                 }
-                msg.append(sec.unitChar);
+                msg.append(sec.unitName);
                 if (i != 0) {
-                    msg.append(linkChar);
+                    msg.append(mLinkChar);
                 }
                 value -= intResult * sec.radix;
             }

@@ -1,7 +1,4 @@
-package com.github.yoojia.tissue;
-
-import org.junit.Before;
-import org.junit.Test;
+package com.github.yoojia.anyunit;
 
 /**
  * Created by Yoojia.Chen
@@ -10,21 +7,21 @@ import org.junit.Test;
  */
 public class SingleUnitTest {
 
-    private Tissue tissue;
+    private AnyUnit mAnyUnit;
 
 //    @Before
 //    public void setUp(){
-//        tissue = Tissue.first("MB", 1024 * 1024);
+//        anyunit = Tissue.first("MB", 1024 * 1024);
 //    }
 //
 //    @Test
 //    public void test(){
-//        String rs = tissue.format(10240055);
+//        String rs = anyunit.format(10240055);
 //
 //    }
 
     public static void main(String[] args) {
-        Tissue t = Tissue.first("MB", 1000*1000);
+        AnyUnit t = AnyUnit.first("MB", 1000 * 1000);
         t.precision(2);
         System.out.println(">> " + t.format(1000*32477));
         System.out.println(">> " + t.format(0));

@@ -1,48 +1,85 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
+    }
+}
 
-version = '1.0-alpha'
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
 group = 'com.github.yoojia'
+version = '1.0'
 
 tasks.withType(JavaCompile){
     options.encoding = 'UTF-8'
 }
 
-repositories {
-    mavenCentral()
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
-task sourceJar(type: Jar, dependsOn: classes) {
-    classifier "source"
-    from sourceSets.main.allJava
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
-artifacts{
-    archives sourceJar
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet 'UTF-8'
+    options.author true
 }
 
-signing {
-    required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("uploadArchives") }
-    Sign configurations.archives
+artifacts {
+    archives sourcesJar, javadocJar
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
 
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: LOCAL_RELEASE_URL){
-                authentication(userName: LOCAL_USER, password: LOCAL_PASS)
+bintray {
+    user = BINTRAY_USER
+    key = BINTRAY_KEY
+    publications = ['mavenJava'] //When uploading Maven-based publication files
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+    pkg {
+        repo = 'maven'
+        name = 'AnyUnit'
+        desc = 'A powerful java unit converter '
+        websiteUrl = 'https://github.com/yoojia/AnyUnit'
+        issueTrackerUrl = 'https://github.com/yoojia/AnyUnit/issues'
+        vcsUrl = 'https://github.com/yoojia/AnyUnit.git'
+        licenses = ['Apache-2.0']
+        labels = ['Java', 'Unit', 'Convert']
+        publicDownloadNumbers = true
+        //Optional version descriptor
+        version {
+            name = project.version //Bintray logical version name
+            desc = 'optional, version-specific description'
+            released  = 'optional, date of the version release' //2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
+            vcsTag = '1.3.0'
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
             }
-
-            snapshotRepository(url: LOCAL_SNAPSHOT_URL){
-                authentication(userName: LOCAL_USER, password: LOCAL_PASS)
-            }
-
-            pom.version = version
-            pom.artifactId = 'tissue'
         }
     }
 }

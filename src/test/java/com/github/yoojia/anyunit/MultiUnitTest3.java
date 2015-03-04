@@ -1,4 +1,4 @@
-package com.github.yoojia.tissue;
+package com.github.yoojia.anyunit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +13,12 @@ import static org.hamcrest.core.Is.is;
  */
 public class MultiUnitTest3 {
 
-    private Tissue tissue;
+    private AnyUnit mAnyUnit;
 
     @Before
     public void setUp(){
-        tissue = Tissue.first("毫秒");
-        tissue.next("秒", 1000)
+        mAnyUnit = AnyUnit.first("毫秒");
+        mAnyUnit.next("秒", 1000)
                 .next("分钟", 60)
                 .next("小时", 60)
                 .next("天", 24)
@@ -28,25 +28,25 @@ public class MultiUnitTest3 {
 
     @Test
     public void testBase(){
-        String base = tissue.format(999);
+        String base = mAnyUnit.format(999);
         assertThat(base,is("999毫秒"));
     }
 
     @Test
     public void testValue(){
-        String value = tissue.format(1024);
+        String value = mAnyUnit.format(1024);
         assertThat(value,is("1秒24毫秒"));
 
-        value = tissue.format(1000*24);
+        value = mAnyUnit.format(1000*24);
         assertThat(value,is("24秒"));
 
-        value = tissue.format(1000*60*3);
+        value = mAnyUnit.format(1000*60*3);
         assertThat(value,is("3分钟"));
     }
 
     @Test
     public void testValue1(){
-        String value = tissue.format(10240);
+        String value = mAnyUnit.format(10240);
         assertThat(value,is("10秒240毫秒"));
     }
 
