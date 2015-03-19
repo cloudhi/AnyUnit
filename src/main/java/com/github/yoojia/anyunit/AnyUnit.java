@@ -10,7 +10,14 @@ public class AnyUnit {
          * 计量单位名
          */
         final String unitName;
+        /**
+         * 量级
+         */
         final long radix;
+
+        /**
+         * 前一量级
+         */
         final long preRadix;
 
         Section(String unitChar, long radix, long preRadix){
@@ -86,7 +93,7 @@ public class AnyUnit {
      * @param linkChar 连接符
      * @return Tissue对象
      */
-    public AnyUnit linkChar(String linkChar){
+    public AnyUnit setLinkChar(String linkChar){
         this.mLinkChar = linkChar;
         return this;
     }
@@ -96,7 +103,7 @@ public class AnyUnit {
      * @param precision 精度小数位数
      * @return Tissue对象
      */
-    public AnyUnit precision(int precision){
+    public AnyUnit setPrecision(int precision){
         this.mPrecision = precision;
         return this;
     }
@@ -116,35 +123,45 @@ public class AnyUnit {
      * @return 格式化的数值
      */
     public String format(double value){
-        final int max = mSections.size() - 1;
+        final int deep = mSections.size() - 1;
+        if (deep == 0){
+            return singleUnit(value);
+        }else{
+            return multiUnit(value, deep);
+        }
+    }
+
+    private String singleUnit(double value){
         final StringBuilder msg = new StringBuilder();
-        // Single
-        if (max == 0){
-            final Section sec = mSections.get(max);
+        final Section sec = mSections.get(0);
+        double result = value / sec.radix;
+        long intResult = (long)result;
+        // 可换成整数，并且没有强制显示精度
+        if (result == intResult && !mEnforcePrecision){
+            msg.append(intResult);
+        }else{
+            msg.append(String.format("%." + mPrecision + "f", result));
+        }
+        msg.append(sec.unitName);
+        return msg.toString();
+    }
+
+    private String multiUnit(double value, int deep){
+        final StringBuilder msg = new StringBuilder();
+        for (int i = deep; i >= 0; --i){
+            Section sec = mSections.get(i);
             double result = value / sec.radix;
-            long intResult = (long)result;
-            if (result == intResult && !mEnforcePrecision){
-                // 不需要显示精度数值
-                msg.append(intResult);
+            int intResult = (int)result;
+            if (intResult <= 0){
+                continue;
             }else{
-                msg.append(String.format("%." + mPrecision + "f", result));
+                msg.append(intResult);
             }
             msg.append(sec.unitName);
-        }else{
-            for (int i = max; i>=0; --i){
-                Section sec = mSections.get(i);
-                double result = value / sec.radix;
-                int intResult = (int)result;
-                if (intResult <= 0){
-                    continue;
-                }else{
-                    msg.append(intResult);
-                }
-                msg.append(sec.unitName);
-                if (i != 0) {
-                    msg.append(mLinkChar);
-                }
-                value -= intResult * sec.radix;
+            value -= intResult * sec.radix;
+            // 如果不是最后一个计量单位，则添加连接符
+            if ( i > 0 && value != 0){
+                msg.append(mLinkChar);
             }
         }
         return msg.toString();

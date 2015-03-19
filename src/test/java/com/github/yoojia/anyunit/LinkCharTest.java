@@ -18,7 +18,7 @@ public class LinkCharTest {
     @Before
     public void setUp(){
         mAnyUnit = AnyUnit.first("B");
-        mAnyUnit.linkChar("-");
+        mAnyUnit.setLinkChar("-");
         mAnyUnit.next("KB",1024)
                 .next("MB",1024)
                 .next("GB",1024)

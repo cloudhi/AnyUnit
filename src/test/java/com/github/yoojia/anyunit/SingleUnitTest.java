@@ -7,23 +7,22 @@ package com.github.yoojia.anyunit;
  */
 public class SingleUnitTest {
 
-    private AnyUnit mAnyUnit;
-
-//    @Before
-//    public void setUp(){
-//        anyunit = Tissue.first("MB", 1024 * 1024);
-//    }
-//
-//    @Test
-//    public void test(){
-//        String rs = anyunit.format(10240055);
-//
-//    }
-
     public static void main(String[] args) {
-        AnyUnit t = AnyUnit.first("MB", 1000 * 1000);
-        t.precision(2);
-        System.out.println(">> " + t.format(1000*32477));
-        System.out.println(">> " + t.format(0));
+        AnyUnit u = AnyUnit.first("元", 1);
+        u.setLinkChar("-");
+        u.setPrecision(3);
+        u.next("万", 10000).next("千万", 1000).next("亿", 10);
+        System.out.println(u.format(1));
+        System.out.println(u.format(10));
+        System.out.println(u.format(100));
+        System.out.println(u.format(1000));
+        System.out.println(u.format(10000));
+        System.out.println(u.format(100000));
+        System.out.println(u.format(1000000));
+        System.out.println(u.format(10000000));
+        System.out.println(u.format(100000000));
+        System.out.println(u.format(200000000));
+        System.out.println(u.format(203040000));
+        System.out.println(u.format(203040500));
     }
 }
