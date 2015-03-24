@@ -123,6 +123,11 @@ public class AnyUnit {
      * @return 格式化的数值
      */
     public String format(double value){
+        // 0值不需要转换
+        if (value == 0){
+            final Section sec = mSections.get(0);
+            return "0" + sec.unitName;
+        }
         final int deep = mSections.size() - 1;
         if (deep == 0){
             return singleUnit(value);
@@ -132,7 +137,9 @@ public class AnyUnit {
     }
 
     private String singleUnit(double value){
-        final StringBuilder msg = new StringBuilder();
+        // 处理负数问题
+        final StringBuilder msg = new StringBuilder( value < 0 ? "-" : "" );
+        value = Math.abs(value);
         final Section sec = mSections.get(0);
         double result = value / sec.radix;
         long intResult = (long)result;
@@ -147,7 +154,9 @@ public class AnyUnit {
     }
 
     private String multiUnit(double value, int deep){
-        final StringBuilder msg = new StringBuilder();
+        // 处理负数问题
+        final StringBuilder msg = new StringBuilder( value < 0 ? "-" : "" );
+        value = Math.abs(value);
         for (int i = deep; i >= 0; --i){
             Section sec = mSections.get(i);
             double result = value / sec.radix;

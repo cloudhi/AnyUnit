@@ -26,6 +26,12 @@ public class MultiUnitTest {
     }
 
     @Test
+    public void testZero(){
+        String zero = mAnyUnit.format(0);
+        assertThat(zero, is("0B"));
+    }
+
+    @Test
     public void testBase(){
         String base = mAnyUnit.format(1023);
         assertThat(base,is("1023B"));
