@@ -6,7 +6,7 @@
 
 已推送到JCenter
 
-> compile 'com.github.yoojia:AnyUnit:1.1'
+> compile 'com.github.yoojia:AnyUnit:1.2'
 
 ## 最基本的使用方式
 
